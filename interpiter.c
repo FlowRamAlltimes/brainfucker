@@ -1,19 +1,27 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
 int main() {
-    char str[4096] = {0};
-  
-    printf("Put your brainfuck code here:\n");
-  
-    fgets(str, sizeof(str), stdin);
-    str[strcspn(str, "\n")] = '\0';
-  
+    char str[16001] = {0};
+    char filename[256];
+    printf("Put your file with .bf here:\n");
+    fgets(filename, sizeof(filename), stdin);
+    filename[strcspn(filename, "\n")] = '\0';
+
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) {
+        printf("Interpriter: !Error:\n");
+        printf("Your file doesn't exist!\n");
+        return 1;
+    }
+    size_t bytes = fread(str, 1,sizeof(str) - 1, f);
+    str[bytes] = '\0';
+    fclose(f); // do not forget to close file
+    // we have got file data
     char tube[30000] = {0};
-  
     int db = 0;
     int index = 0;
-  
     while (str[index] != '\0') {
         switch (str[index]) {
             case '+':
